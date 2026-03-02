@@ -1,0 +1,21 @@
+#!/bin/sh
+
+exec vim "$@"
+
+
+# Terraform
+.terraform/
+terraform.tfstate
+terraform.tfstate.*
+*.tfvars
+
+# VS Code
+.vscode/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# .NET
+bin/
+obj/
