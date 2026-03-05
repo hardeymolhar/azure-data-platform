@@ -96,7 +96,7 @@ resource "azurerm_cosmosdb_account" "cosmos" {
   offer_type          = "Standard"
   kind                = "GlobalDocumentDB"
 
-   local_authentication_disabled = false
+  local_authentication_disabled      = false
   access_key_metadata_writes_enabled = false
 
 
@@ -113,11 +113,13 @@ resource "azurerm_cosmosdb_account" "cosmos" {
 
 
 resource "azurerm_cosmosdb_sql_database" "databases" {
-  for_each            = var.cosmosdb_structure
+  for_each = var.cosmosdb_structure
 
   name                = each.key
   resource_group_name = local.primary_rg
   account_name        = azurerm_cosmosdb_account.cosmos.name
+  throughput = each.value.throughput
+
 }
 
 resource "azurerm_cosmosdb_sql_container" "containers" {
@@ -134,7 +136,6 @@ resource "azurerm_cosmosdb_sql_container" "containers" {
   partition_key_paths = [each.value.partition_key]
   partition_key_kind  = "Hash"
 
-  throughput = each.value.throughput
 }
 
 

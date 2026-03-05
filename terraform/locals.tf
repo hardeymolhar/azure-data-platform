@@ -5,7 +5,7 @@ locals {
         db_name        = db_name
         container_name = container_name
         partition_key  = container.partition_key
-        throughput     = container.throughput
+        throughput     = db.throughput
       }
     ]
   ])
