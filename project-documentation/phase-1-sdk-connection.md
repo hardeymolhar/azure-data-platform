@@ -59,3 +59,4 @@ The connection to Azure Cosmos DB was validated using the .NET SDK by retrieving
 The output confirms that the application successfully authenticated and established communication with the Cosmos DB account.
 
 ![Cosmos DB SDK Connectivity](images/dotnet-sdk-connect.png)
+

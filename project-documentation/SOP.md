@@ -89,9 +89,10 @@ Now the reader understands the **entire workflow in 5 seconds**.
 
 ## 3. Repository Structure
 
-```markdown
+
 ## Repository Structure
 
+```markdown
 dp-420-cosmos-db-dev
 │
 ├── 04-sdk-connect

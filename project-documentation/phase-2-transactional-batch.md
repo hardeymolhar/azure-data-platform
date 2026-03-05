@@ -118,3 +118,63 @@ If any operation within the batch fails:
 - all operations are rolled back
 
 - the transaction is not committed
+
+
+
+![Dedicated Throughput Configuration](images/transaction-batch.png)
+
+![Dedicated Throughput Configuration](images/batch-transaction-confirmation.png)
+
+
+
+
+
+# Key Lessons From Phase 2
+
+## Introducing Terraform Module Architecture
+The initial Terraform configuration defined most infrastructure resources directly within a single configuration structure. While functional for experimentation, this approach becomes difficult to maintain as infrastructure grows.
+
+![Dedicated Throughput Configuration](images/directory-view.png)
+
+Challenges included:
+
+```mermaid
+flowchart LR
+A[Single Terraform Configuration] --> B[Repeated Configuration Blocks]
+B --> C[Limited Reusability]
+C --> D[Difficult Environment Separation]
+```
+```mermaid
+flowchart TD
+D[Problems Identified] --> E[Refactor to Terraform Modules]
+```
+
+
+
+```mermaid
+flowchart TD
+F[Reusable Infrastructure Components] --> G[Dev Environment]
+F --> H[Prod Environment]
+```
+
+
+
+## Confusion Between Terraform Argument Types
+What Happened
+
+While implementing networking resources, I initially struggled with Terraform schema requirements regarding argument types such as:
+
+-**string**
+
+-**list(string)**
+
+-**map(object(...))**
+
+This led to an incorrect configuration where the expression was interpreted as a literal string instead of a variable reference.
+
+```mermaid
+flowchart LR
+A[Infrastructure Design] --> D[Better Cloud Engineering]
+B[Terraform Type Understanding] --> D
+C[Strengthening Infrastructure Security] --> D
+```
