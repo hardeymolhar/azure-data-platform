@@ -24,13 +24,37 @@ variable "client_ip" {
 variable "rg" {
   type        = list(string)
   description = "Resource group name"
-  default     = ["rg_sb_eastus_308450_1_17723966358",
-                 "rg_sb_westus_308450_2_177239663779",
-                 "rg_sb_centralindia_308450_3_177239663992"]
+  default     = ["rg_sb_eastus_308450_1_177270170014",
+                 "rg_sb_westus_308450_2_177270170293",
+                 "rg_sb_centralindia_308450_3_177270170393"]
 }
 
 variable "location" {
-  type        = string
+  type        = list(string)
   description = "Azure region for all resources."
-  default     = "centralindia"
+  default     = ["eastus", "westus", "centralindia"]
 }
+
+
+
+variable "cosmosdb_structure" {
+  type = map(object({
+    containers = map(object({
+      partition_key = string
+      throughput   = number
+    }))
+  }))
+}
+
+
+variable "network_structure" {
+  type = map(object({
+    address_space = list(string)
+
+    subnets = map(object({
+      address_prefix = list(string)
+    }))
+  }))
+}
+
+

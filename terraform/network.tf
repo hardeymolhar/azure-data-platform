@@ -1,14 +1,19 @@
 # VNet + Subnet
 resource "azurerm_virtual_network" "vnet" {
-  name                = "dev-vnet"
-  location            = var.location
-  resource_group_name = var.rg[0]
-  address_space       = ["10.10.0.0/16"]
+  for_each = var.network_structure
+
+  name                = each.key
+  location            = local.primary_location
+  resource_group_name = local.primary_rg
+  address_space       = each.value.address_space
 }
 
 resource "azurerm_subnet" "subnet" {
-  name                 = "dev-subnet"
-  resource_group_name  = var.rg[0]
-  virtual_network_name = azurerm_virtual_network.vnet.name
-  address_prefixes     = ["10.10.1.0/24"]
+  for_each = local.subnet_map
+
+  name                 = each.value.subnet_name
+  resource_group_name  = local.primary_rg
+  virtual_network_name = azurerm_virtual_network.vnet[each.value.vnet_name].name
+
+  address_prefixes = each.value.address_prefix
 }
