@@ -24,9 +24,9 @@ variable "client_ip" {
 variable "rg" {
   type        = list(string)
   description = "Resource group name"
-  default = ["rg_sb_eastus_308450_1_177270170014",
-    "rg_sb_westus_308450_2_177270170293",
-  "rg_sb_centralindia_308450_3_177270170393"]
+  default = ["rg_sb_eastus_308450_1_177273186276",
+    "rg_sb_westus_308450_2_177273186467",
+  "rg_sb_centralindia_308450_3_177273186523"]
 }
 
 variable "location" {
