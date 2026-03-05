@@ -24,26 +24,43 @@ Transactional batch was selected to:
 
 Azure Cosmos DB allows throughput to be configured either at the **container level (dedicated throughput)** or at the **database level (shared throughput)**.
 
-In this project, **database-level shared throughput** was intentionally selected instead of provisioning dedicated throughput for each container.
+#### Throughput Architecture
 
-This decision was made for the following reasons.
+```mermaid
+flowchart LR
 
-#### Predictable Workload
+subgraph Dedicated Throughput
+A[Container A<br>400 RU/s]
+B[Container B<br>400 RU/s]
+C[Container C<br>400 RU/s]
+end
 
-The transactional batch operations executed in this phase generate a controlled and predictable number of write operations. Because the workload characteristics are known in advance, a shared throughput pool is sufficient to handle the expected request volume.
+subgraph Shared Throughput
+D[Database RU Pool<br>400 RU/s]
+E[Container 1]
+F[Container 2]
+G[Container 3]
+end
 
-#### Lab / Sandbox Environment
+D --> E
+D --> F
+D --> G
+```
 
-This project was executed in a controlled sandbox environment designed to validate SDK behavior and batching functionality rather than support production traffic. Shared throughput provides adequate performance while minimizing unnecessary resource allocation.
+Key difference:
 
-#### Cost Efficiency
+Dedicated throughput: each container has its own RU pool
+Shared throughput: containers consume RU/s from a common database pool
 
-Dedicated throughput allocates Request Units (RU/s) to each container individually. In environments where containers are not consistently active, this can lead to underutilized capacity.
 
-Using shared throughput allows multiple containers within the database to consume RU/s from a common pool, improving utilization and reducing overall cost.
+### Decision Summary
+In this project, **database-level shared throughput** was intentionally selected.
 
-The screenshots below demonstrate the difference between container-level dedicated throughput and database-level shared throughput.
-
+| Factor | Reason |
+|-------|--------|
+| Predictable Workload | Transactional batch operations generate controlled write volumes |
+| Environment | Project executed in a lab / sandbox for SDK validation |
+| Cost Efficiency | Shared RU pool prevents unused capacity across containers |
 ---
 
 ### Dedicated Throughput (Container Level)
@@ -80,6 +97,24 @@ TransactionalBatchResponse response =
     await batch.ExecuteAsync();
 ```
 
+## Batch Model Execution
+
+```mermaid
+flowchart LR
+A[Generate Partition Key]
+--> B[Create Items]
+--> C[Group Items Into Batches]
+--> D[Create Transactional Batch]
+--> E[Execute Batch]
+--> F[Validate StatusCode]
+```
+
 Each batch executes atomically within the specified partition key.
 
-If any operation within the batch fails, the entire batch fails and the transaction is rolled back.
+If any operation within the batch fails:
+
+- the entire batch fails
+
+- all operations are rolled back
+
+- the transaction is not committed
