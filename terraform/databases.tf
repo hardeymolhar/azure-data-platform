@@ -118,7 +118,7 @@ resource "azurerm_cosmosdb_sql_database" "databases" {
   name                = each.key
   resource_group_name = local.primary_rg
   account_name        = azurerm_cosmosdb_account.cosmos.name
-  throughput = each.value.throughput
+  throughput          = each.value.throughput
 
 }
 

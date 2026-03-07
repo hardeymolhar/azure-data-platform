@@ -12,19 +12,27 @@ locals {
 }
 
 
+locals {
+  client_ip = chomp(data.http.client_ip.response_body)
+}
 
 
 locals {
-  subnet_map = merge([
-    for vnet_name, vnet in var.network_structure : {
-      for subnet_name, subnet_obj in vnet.subnets :
-      "${vnet_name}-${subnet_name}" => {
-        vnet_name      = vnet_name
-        subnet_name    = subnet_name
-        address_prefix = subnet_obj.address_prefix
+
+  subnets = flatten([
+    for vnet_name, vnet in var.network_structure : [
+      for subnet_name, subnet_obj in vnet.subnets : {
+        vnet_name   = vnet_name
+        subnet_name = subnet_name
+        prefix      = subnet_obj.address_prefix
       }
-    }
-  ]...)
+    ]
+  ])
+
+  subnet_map = {
+    for subnet in local.subnets :
+    "${subnet.vnet_name}-${subnet.subnet_name}" => subnet
+  }
 }
 
 
