@@ -25,12 +25,12 @@ resource "azurerm_linux_virtual_machine" "vm" {
   size                = var.vm_size
   admin_username      = var.admin_username
 
-  custom_data = base64encode(templatefile("${path.module}/config-files/cloud-init.yaml", {
-    storage_account = azurerm_storage_account.storage.name
-    sas_token       = data.azurerm_storage_account_sas.script_sas.sas
-    cosmos_endpoint = data.azurerm_cosmosdb_account.cosmos.endpoint
-    cosmos_key      = azurerm_cosmosdb_account.cosmos.primary_key
-  }))
+  #custom_data = base64encode(templatefile("${path.module}/config-files/cloud-init.yaml", {
+  # storage_account = azurerm_storage_account.storage.name
+  ##  sas_token       = data.azurerm_storage_account_sas.script_sas.sas
+  # cosmos_endpoint = data.azurerm_cosmosdb_account.cosmos.endpoint
+  #cosmos_key      = azurerm_cosmosdb_account.cosmos.primary_key
+  #}))
 
 
   admin_ssh_key {

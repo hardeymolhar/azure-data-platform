@@ -1,6 +1,6 @@
 #!/bin/bash
 
-RESOURCE_GROUP="rg_sb_eastus_308450_1_177256592430"
+RESOURCE_GROUP=$(az group list --query "[0].name" -o tsv)
 ACCOUNT_NAME="cosmosdb1725234"
 
 echo "Auditing Cosmos DB Partition Keys"

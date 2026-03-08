@@ -3,12 +3,12 @@ resource "azurerm_network_security_group" "nsg" {
   for_each = {
     for subnet in local.subnets :
     "${subnet.vnet_name}-${subnet.subnet_name}" => subnet
+    if subnet.subnet_name != "AzureBastionSubnet"
   }
 
   name                = "${each.value.vnet_name}-${each.value.subnet_name}-nsg"
   location            = local.primary_location
   resource_group_name = local.primary_rg
-
 }
 
 resource "azurerm_subnet_network_security_group_association" "nsg_assoc" {
@@ -16,6 +16,7 @@ resource "azurerm_subnet_network_security_group_association" "nsg_assoc" {
   for_each = {
     for subnet in local.subnets :
     "${subnet.vnet_name}-${subnet.subnet_name}" => subnet
+    if subnet.subnet_name != "AzureBastionSubnet"
   }
 
   subnet_id = azurerm_subnet.subnet[
@@ -34,7 +35,7 @@ resource "azurerm_network_security_rule" "ssh_rule" {
   for_each = {
     for key, value in azurerm_network_security_group.nsg :
     key => value
-    if !strcontains(key, "pe-subnet")
+    if !strcontains(key, "pe-subnet") && !strcontains(key, "AzureBastionSubnet")
   }
 
   name      = "AllowSSH"
@@ -46,7 +47,7 @@ resource "azurerm_network_security_rule" "ssh_rule" {
   source_port_range      = "*"
   destination_port_range = "22"
 
-  source_address_prefixes      = [local.client_ip, azurerm_public_ip.vm_pip.ip_address]
+  source_address_prefixes    = [local.client_ip]
   destination_address_prefix = "*"
 
   resource_group_name         = local.primary_rg

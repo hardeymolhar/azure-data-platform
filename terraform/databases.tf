@@ -99,7 +99,9 @@ resource "azurerm_cosmosdb_account" "cosmos" {
   local_authentication_disabled      = false
   access_key_metadata_writes_enabled = false
 
-
+  ip_range_filter = [
+    "${local.client_ip}/32"
+  ]
 
   consistency_policy {
     consistency_level = "Session"
