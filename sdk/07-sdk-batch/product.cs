@@ -1,0 +1,1 @@
+public record AuditLog(string id, string name, string logId);

@@ -4,10 +4,11 @@ exec vim "$@"
 
 
 # Terraform
+.terraform/x
+*.tfstate
+*.tfstate.backup
 .terraform/
-terraform.tfstate
-terraform.tfstate.*
-
+tfplan
 # VS Code
 .vscode/
 
