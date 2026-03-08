@@ -15,34 +15,6 @@ resource "local_file" "private_key" {
 
 
 
-# NSG - production: restrict ssh to allowed_ssh_cidr
-resource "azurerm_network_security_group" "nsg" {
-  name                = "${var.vm_name}-nsg"
-  location            = local.primary_location
-  resource_group_name = local.primary_rg
-
-  security_rule {
-    name                       = "SSH-ALLOW"
-    priority                   = 100
-    direction                  = "Inbound"
-    access                     = "Allow"
-    protocol                   = "Tcp"
-    source_port_range          = "*"
-    destination_port_range     = "22"
-    source_address_prefix      = local.client_ip
-    destination_address_prefix = "*"
-  }
-
-  # deny all inbound by default is implied; add extra rules as needed
-}
-
-# NSG association to subnet (or associate to NIC for more granular control)
-resource "azurerm_subnet_network_security_group_association" "subnet_nsg_assoc" {
-  subnet_id                 = azurerm_subnet.subnet["prod-vnet-app-subnet"].id
-  network_security_group_id = azurerm_network_security_group.nsg.id
-}
-
-
 # Linux VM (Gen2, zone aware)
 resource "azurerm_linux_virtual_machine" "vm" {
 
@@ -61,10 +33,10 @@ resource "azurerm_linux_virtual_machine" "vm" {
   }))
 
 
- admin_ssh_key {
-   username = var.admin_username
-   public_key = tls_private_key.ssh_key.public_key_openssh
- }
+  admin_ssh_key {
+    username   = var.admin_username
+    public_key = tls_private_key.ssh_key.public_key_openssh
+  }
   disable_password_authentication = true
 
 

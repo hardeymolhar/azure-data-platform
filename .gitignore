@@ -7,7 +7,6 @@ exec vim "$@"
 .terraform/
 terraform.tfstate
 terraform.tfstate.*
-*.tfvars
 
 # VS Code
 .vscode/
