@@ -1,19 +1,22 @@
 # Phase 3 --- Automated Infrastructure Deployment and System Orchestration
 
-## Project Progression
 
+
+## Project Progression
+```
   -----------------------------------------------------------------------
   Phase                               Focus
   ----------------------------------- -----------------------------------
   Phase 1                             Establish Cosmos DB connectivity
-                                      using the .NET SDK
+                                       | .NET SDK |
 
-  Phase 2                             Implement efficient ingestion using
-                                      Transactional Batch
+  Phase 2                             Implement high-efficiency ingestion 
+                                       | Transactional Batch |
 
-  Phase 3                             Automate infrastructure deployment
-                                      and application execution
+  Phase 3                             Automate infrastructure and deployment
+                                       | Terraform, Ansible |
   -----------------------------------------------------------------------
+  ```
 
 Phase 3 transitions the project from manual testing to automated
 deployment and execution.
