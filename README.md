@@ -1,38 +1,83 @@
+
 # Azure Cosmos DB Data Platform
 
-End-to-end cloud data platform demonstrating infrastructure automation, application deployment, and high-efficiency ingestion using Azure Cosmos DB.
+This project explores how to build an automated data ingestion
+platform for Azure Cosmos DB while maintaining fully reproducible
+infrastructure and efficient batch operations.
 
-This project evolves through three phases:
+The goal was to answer a practical engineering question:
 
-1. SDK connectivity validation  
-2. Efficient data ingestion using transactional batch operations  
-3. Full infrastructure automation with Terraform and Ansible  
+```bash
+ 🤔 How might we efficiently ingest large volumes of data into Cosmos DB 
+ git while keeping infrastructure fully reproducible and automated?
+```
 
+To explore this, the platform evolves across three phases:
+1. Validating Cosmos DB SDK connectivity
+2. Designing a high-efficiency batch ingestion strategy
+3. Automating the entire infrastructure and deployment pipeline
 ---
+
+
+
+
 
 
 
 # System Architecture
 
-<p align="center">
-<img src="docs/images/phase3-architecture.png" width="900">
-</p>
+```mermaid
 
-The platform automates infrastructure provisioning, server configuration, and Cosmos DB ingestion using Infrastructure-as-Code and configuration management tools.
+flowchart TD
 
----
+subgraph Cloud Platform
+A[Microsoft Azure]
+end
 
-# Technology Stack
+subgraph Infrastructure
+B[Terraform<br>Infrastructure as Code]
+end
 
-| Layer | Technology |
-|-----|-----|
-| Cloud | Microsoft Azure |
-| Infrastructure as Code | Terraform |
-| Configuration Management | Ansible |
-| Database | Azure Cosmos DB |
-| Application | .NET SDK |
-| Networking | VNet, NSG, Service Endpoints |
+subgraph Networking
+C[Virtual Network]
+D[Network Security Groups]
+E[Service Endpoints]
+end
 
+subgraph Compute
+F[Azure Virtual Machine]
+end
+
+subgraph Configuration
+G[Ansible<br>Configuration Management]
+end
+
+subgraph Application
+H[.NET SDK Application]
+end
+
+subgraph Database
+I[Azure Cosmos DB]
+end
+
+A --> B
+B --> C
+C --> D
+C --> E
+C --> F
+
+F --> G
+G --> H
+H --> I
+
+```
+
+## Key Engineering Decisions
+
+- Used TransactionalBatch API to reduce Cosmos DB network overhead
+- Implemented Terraform for reproducible infrastructure
+- Adopted Ansible for server configuration instead of ad-hoc scripts
+- Switched from Private Endpoints to Service Endpoints due to RBAC constraints
 ---
 
 # Project Phases
@@ -80,20 +125,7 @@ A[VM Provisioned]
 ```
 
 
-# Configuration Management
-
-After infrastructure deployment, Ansible configures the virtual machine and prepares the environment for application execution.
-
-```mermaid
-flowchart LR
-
-A[VM Provisioned]
---> B[Generate Inventory]
---> C[Run Ansible Playbook]
---> D[Install Dependencies]
---> E[Run Cosmos SDK Application]
-```
-Execution Evidence
+# Deployment Validation 
 
 Terraform Infrastructure Deployment
 
@@ -103,18 +135,12 @@ VM Connectivity Validation
 
 <p align="center"> <img src="docs/images/ping-vm-test.png" width="900"> </p>
 
+
 Successful Ansible Deployment
 
 <p align="center"> <img src="docs/images/ansible-success.png" width="900"> </p>
 
-Cosmos DB Batch Execution
+Cosmos DB Data Explorer showing documents inserted by the automated batch ingestion process
 
 <p align="center"> <img src="docs/images/sdk-batch-run.png" width="900"> </p>
 
-
-Key Engineering Decisions
-
-- Used TransactionalBatch API to reduce Cosmos DB network overhead
-- Implemented Terraform for reproducible infrastructure
-- Adopted Ansible for server configuration instead of ad-hoc scripts
-- Switched from Private Endpoints to Service Endpoints due to RBAC constraints
