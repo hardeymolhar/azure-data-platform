@@ -5,14 +5,12 @@
   gather_facts: true
 
   vars:
-    # Required: pass these via --extra-vars or vault
     cosmos_endpoint: "{{ cosmos_endpoint | default(omit) }}"
     cosmos_key: "{{ cosmos_key | default(omit) }}"
     dotnet_install_url: "https://dot.net/v1/dotnet-install.sh"
     dotnet_install_dir: "/usr/local/dotnet"
     cosmos_repo: "https://github.com/hardeymolhar/azure-data-platform.git"
     repo_dest: "/home/app"
-    # NuGet package version from your script (you can bump this if desired)
     cosmos_nuget_version: "3.22.1"
 
   pre_tasks:
@@ -21,12 +19,10 @@
         that:
           - cosmos_endpoint is not none
           - cosmos_key is not none
-        fail_msg: >-
-          cosmos_endpoint and cosmos_key are required. Pass them with
-          --extra-vars "cosmos_endpoint=... cosmos_key=..." or use Ansible Vault.
 
   tasks:
-    - name: Install required packages (curl, git)
+
+    - name: Install required packages
       ansible.builtin.dnf:
         name:
           - curl
@@ -34,14 +30,13 @@
         state: present
         update_cache: yes
 
-    - name: Download dotnet-install.sh
+    - name: Download dotnet installer
       ansible.builtin.get_url:
         url: "{{ dotnet_install_url }}"
         dest: /tmp/dotnet-install.sh
-        mode: '0755'
-        validate_certs: yes
+        mode: "0755"
 
-    - name: Run dotnet-install.sh (install SDK channel 8.0)
+    - name: Install .NET SDK
       ansible.builtin.command:
         argv:
           - /tmp/dotnet-install.sh
@@ -52,77 +47,38 @@
       args:
         creates: "{{ dotnet_install_dir }}/dotnet"
 
-    - name: Create /etc/profile.d/dotnet.sh (system-wide DOTNET vars)
-      ansible.builtin.copy:
-        dest: /etc/profile.d/dotnet.sh
-        content: |
-          export DOTNET_ROOT={{ dotnet_install_dir }}
-          export PATH=$DOTNET_ROOT:$PATH
-        owner: root
-        group: root
-        mode: '0644'
-
-    - name: Create application directory
-      ansible.builtin.file:
-       path: "{{ repo_dest }}"
-       state: directory
-       owner: azureuser
-       group: azureuser
-       mode: '0755'
-
-
-    - name: Clone repository into {{ repo_dest }} as azureuser
+    - name: Clone project repository
       ansible.builtin.git:
         repo: "{{ cosmos_repo }}"
         dest: "{{ repo_dest }}"
         version: HEAD
         update: yes
         force: yes
-      become: true
       become_user: azureuser
-   
-    - name: Create /etc/profile.d/cosmos.sh with environment variables
-      ansible.builtin.copy:
-        dest: /etc/profile.d/cosmos.sh
-        content: |
-          export COSMOS_ENDPOINT="{{ cosmos_endpoint }}"
-          export COSMOS_KEY="{{ cosmos_key }}"
-        owner: root
-        group: root
-        mode: '0644'
 
-    - name: Run Cosmos SDK connection example (04-sdk-connect)
+    - name: Run Cosmos connection example
       ansible.builtin.shell: |
-        # ensure dotnet path is available for this non-login shell
-        source /etc/profile.d/dotnet.sh || true
-        source /etc/profile.d/cosmos.sh || true
         dotnet restore
-        dotnet add package Microsoft.Azure.Cosmos --version {{ cosmos_nuget_version }}
         dotnet build
         dotnet run
       args:
-        chdir: "{{ repo_dest }}/terraform/cosmos-sdk/04-sdk-connect"
-      become: true
+        chdir: "{{ repo_dest }}/sdk/01-establish-connection"
       become_user: azureuser
-      environment:
-        DOTNET_ROOT: "{{ dotnet_install_dir }}"
-        PATH: "{{ dotnet_install_dir }}:{{ ansible_env.PATH | default('/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin') }}"
 
-
-
-
-    - name: Run Cosmos SDK transactional batch example (07-sdk-batch)
+    - name: Run Cosmos batch example
       ansible.builtin.shell: |
         dotnet restore
-        dotnet add package Microsoft.Azure.Cosmos --version {{ cosmos_nuget_version }}
         dotnet build
         dotnet run
       args:
-        chdir: "{{ repo_dest }}/terraform/cosmos-sdk/07-sdk-batch"
-      become: true
+        chdir: "{{ repo_dest }}/sdk/02-batch-inserts"
       become_user: azureuser
-      environment:
-        COSMOS_ENDPOINT: "{{ cosmos_endpoint }}"
-        COSMOS_KEY: "{{ cosmos_key }}"
-        DOTNET_ROOT: "{{ dotnet_install_dir }}"
-        PATH: "{{ dotnet_install_dir }}:{{ ansible_env.PATH }}"
+
+    - name: Run Cosmos index optimization
+      ansible.builtin.shell: |
+        dotnet restore
+        dotnet build
+        dotnet run
+      args:
+        chdir: "{{ repo_dest }}/sdk/03-index-optimization"
+      become_user: azureuser

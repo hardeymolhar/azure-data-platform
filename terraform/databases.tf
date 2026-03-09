@@ -90,7 +90,7 @@
 
 # Azure Cosmos DB Account
 resource "azurerm_cosmosdb_account" "cosmos" {
-  name                = "cosmosdb1725234"
+  name                = "[cosmosdb1725234]"
   location            = local.primary_location
   resource_group_name = local.primary_rg
   offer_type          = "Standard"
