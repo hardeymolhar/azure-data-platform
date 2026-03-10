@@ -13,9 +13,9 @@ variable "db_username" {
 variable "rg" {
   type        = list(string)
   description = "Resource group name"
-  default = ["rg_sb_eastus_308450_1_177303142428",
-    "rg_sb_westus_308450_2_177303142666",
-  "rg_sb_centralindia_308450_3_177303142860"]
+  default = ["rg_sb_eastus_308450_1_177309339738",
+    "rg_sb_westus_308450_2_177309339827",
+  "rg_sb_centralindia_308450_3_177309339954"]
 }
 
 variable "location" {

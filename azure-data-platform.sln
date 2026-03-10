@@ -1,43 +1,15 @@
+﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.5.2.0
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "terraform", "terraform", "{A3BAFF8E-489D-A02E-C557-F4B087C032DC}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "cosmos-sdk", "cosmos-sdk", "{8B7E224A-56B3-E78D-9117-B3C80DCA827E}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "04-sdk-connect", "04-sdk-connect", "{B6A7E20A-6750-295C-0ADA-3310F1A50953}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "app", "terraform\cosmos-sdk\04-sdk-connect\app.csproj", "{611CD6B7-9DF5-8683-7B0E-A447CFB50969}"
-EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "07-sdk-batch", "07-sdk-batch", "{F60EE7F3-E7C6-FD3A-983C-8381B0213B1D}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "app", "terraform\cosmos-sdk\07-sdk-batch\app.csproj", "{3398B4C2-A355-C736-6744-98CB0A8AECC9}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{611CD6B7-9DF5-8683-7B0E-A447CFB50969}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{611CD6B7-9DF5-8683-7B0E-A447CFB50969}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{611CD6B7-9DF5-8683-7B0E-A447CFB50969}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{611CD6B7-9DF5-8683-7B0E-A447CFB50969}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3398B4C2-A355-C736-6744-98CB0A8AECC9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3398B4C2-A355-C736-6744-98CB0A8AECC9}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3398B4C2-A355-C736-6744-98CB0A8AECC9}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3398B4C2-A355-C736-6744-98CB0A8AECC9}.Release|Any CPU.Build.0 = Release|Any CPU
-	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
-	EndGlobalSection
-	GlobalSection(NestedProjects) = preSolution
-		{8B7E224A-56B3-E78D-9117-B3C80DCA827E} = {A3BAFF8E-489D-A02E-C557-F4B087C032DC}
-		{B6A7E20A-6750-295C-0ADA-3310F1A50953} = {8B7E224A-56B3-E78D-9117-B3C80DCA827E}
-		{611CD6B7-9DF5-8683-7B0E-A447CFB50969} = {B6A7E20A-6750-295C-0ADA-3310F1A50953}
-		{F60EE7F3-E7C6-FD3A-983C-8381B0213B1D} = {8B7E224A-56B3-E78D-9117-B3C80DCA827E}
-		{3398B4C2-A355-C736-6744-98CB0A8AECC9} = {F60EE7F3-E7C6-FD3A-983C-8381B0213B1D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {8746AF1F-0227-4B64-B362-C50F2087C8CD}
