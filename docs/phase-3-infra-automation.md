@@ -60,15 +60,6 @@ I --> J
 J --> H
 ```
 
-Replace the image below with your architecture diagram if available.
-
-```{=html}
-<p align="center">
-```
-`<img src="images/phase3-architecture.png" width="900">`{=html}
-```{=html}
-</p>
-```
 The architecture connects infrastructure provisioning, server
 configuration, and application execution into one automated workflow.
 
@@ -83,10 +74,14 @@ In the earlier phases, key capabilities were validated manually:
 
 However, several tasks still required manual execution:
 
--   deploying infrastructure
--   configuring the virtual machine
--   executing the SDK application
--   running ingestion tests
+```mermaid
+
+flowchart LR
+
+Terraform[Deploy Infrastructure] --> VM[Configure VM]
+VM --> SDK[Execute SDK Application]
+SDK --> Test[Run Ingestion Tests]
+```
 
 This made the environment difficult to recreate consistently.
 
@@ -120,31 +115,29 @@ Terraform provisions the infrastructure required for the platform.
 
 ## Terraform Resource Dependency Graph
 
-The following graph shows how Terraform resources are related and
-deployed.
+The diagram below shows how Terraform resources are related and deployed.
 
-Key dependencies include:
+Core components include:
 
-- Virtual network and subnet configuration
+- Virtual network and subnets
 - Network security rules
-- Virtual machine deployment
-- Cosmos DB account provisioning
+- Virtual machine 
+- Cosmos DB account 
 
-```{=html}
-<p align="center">
-```
-`<img src="images/terraform-graph.png" width="900">`{=html}
-```{=html}
-</p>
-```
 This graph was generated using:
 
 ``` bash
 terraform graph | dot -Tpng > terraform-graph.png
+
 ```
 
-The visualization shows the dependency relationships between networking
-resources, compute infrastructure, and Cosmos DB services.
+![Cosmos DB SDK Architecture](images/graph.png)
+
+Infrastructure provisioning is automated using:
+
+```bash
+azure-data-platform/deployment-pipeline.sh
+```
 
 ------------------------------------------------------------------------
 
@@ -162,31 +155,6 @@ A --> E[Virtual Machine]
 A --> F[Cosmos DB Account]
 A --> G[Supporting Services]
 ```
-
-Infrastructure deployment follows a consistent workflow.
-
-``` bash
-terraform init
-terraform validate
-terraform fmt
-terraform plan
-terraform apply
-```
-
-------------------------------------------------------------------------
-
-## Terraform Graph & Deployment Evidence
-
-```{=html}
-<p align="center">
-```
-`<img src="images/terraform-apply.png" width="900">`{=html}
-```{=html}
-</p>
-```
-The Terraform pipeline provisions the infrastructure resources required
-for the environment.
-
 ------------------------------------------------------------------------
 
 # VM Connectivity Validation
@@ -268,10 +236,58 @@ E --> F[Transactional Batch Inserts]
 
 ------------------------------------------------------------------------
 
-# Network Architecture Constraint
+# Private Endpoint Networking Constraint
 
-The original architecture intended to use Cosmos DB Private Endpoints.
+## Planned Architecture
 
+The original design used private networking for Cosmos DB access.
+
+It included:
+
+- Cosmos DB Private Endpoint
+- Private DNS Zone
+- VNet DNS link
+
+However, Accessing a private endpoint requires network connectivity into the VNet.
+```mermaid
+flowchart LR
+USER[Client Access] --> VPN[VPN Gateway]
+VPN --> VNET[Virtual Network]
+VNET --> PE[Private Endpoint]
+PE --> COSMOS[Cosmos DB]
+```
+
+This normally requires:
+
+- Point-to-Site VPN
+- Site-to-Site VPN
+- ExpressRoute
+
+```bash
+Deployment Constraint
+
+Deployment of a Point-to-Site VPN gateway was not possible due to RBAC restrictions.
+Without VPN access, the private endpoint could not be reached from the development environment.
+```
+## Architecture Adjustment
+
+Because of this limitation, the architecture was modified to allow the application to connect to Cosmos DB without requiring VNet access.
+
+```mermaid
+flowchart LR
+VM[Application VM] --> COSMOS[Cosmos DB Endpoint]
+
+COSMOS --> SDK[Cosmos DB SDK]
+SDK --> TEST[Ingestion Tests]
+```
+
+This adjustment enabled:
+```bash
+SDK execution
+ingestion testing
+application connectivity
+```
+while still allowing the infrastructure pipeline to be demonstrated.
 Terraform configuration for this design exists in the project:
 
 ``` bash
