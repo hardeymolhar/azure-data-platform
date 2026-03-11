@@ -9,7 +9,7 @@ The goal was to answer a practical engineering question:
 
 ```bash
  🤔 How might we efficiently ingest large volumes of data into Cosmos DB 
- git while keeping infrastructure fully reproducible and automated?
+ while keeping infrastructure fully reproducible and automated?
 ```
 
 To explore this, the platform evolves across three phases:
@@ -129,18 +129,22 @@ A[VM Provisioned]
 
 Terraform Infrastructure Deployment
 
-<p align="center"> <img src="docs/images/terraform-apply.png" width="900"> </p>
+<p align="center"> <img src="docs/images/Terraform-Apply.gif" width="900"> </p>
+
 
 VM Connectivity Validation
 
-<p align="center"> <img src="docs/images/ping-vm-test.png" width="900"> </p>
+<p align="center"> <img src="docs/images/SSH-Confirmation.gif" width="900"> </p>
 
 
-Successful Ansible Deployment
+<p align="center">  Successful Ansible Deployment  </p>
 
-<p align="center"> <img src="docs/images/ansible-success.png" width="900"> </p>
+<p align="center"> <img src="docs/images/ansible-config.gif" width="900"> </p>
 
 Cosmos DB Data Explorer showing documents inserted by the automated batch ingestion process
 
-<p align="center"> <img src="docs/images/sdk-batch-run.png" width="900"> </p>
+<p align="center"> <img src="docs/images/Batch-Insert-Confirmation.gif" width="900"> </p>
+
+<p align="center"> <img src="docs/images/Metrics-Confirmation.gif" width="900"> </p>
+
 
