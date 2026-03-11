@@ -85,9 +85,6 @@ SDK --> Test[Run Ingestion Tests]
 
 This made the environment difficult to recreate consistently.
 
-The objective of Phase 3 was to automate the entire workflow, from
-infrastructure deployment to data ingestion.
-
 ------------------------------------------------------------------------
 
 # Engineering Flow
@@ -111,18 +108,7 @@ D --> E[Transactional Batch Inserts]
 
 # Infrastructure Deployment
 
-Terraform provisions the infrastructure required for the platform.
-
 ## Terraform Resource Dependency Graph
-
-The diagram below shows how Terraform resources are related and deployed.
-
-Core components include:
-
-- Virtual network and subnets
-- Network security rules
-- Virtual machine 
-- Cosmos DB account 
 
 This graph was generated using:
 
@@ -137,23 +123,6 @@ Infrastructure provisioning is automated using:
 
 ```bash
 azure-data-platform/deployment-pipeline.sh
-```
-
-------------------------------------------------------------------------
-
-## Simplified Infrastructure View
-
-``` mermaid
-flowchart TD
-
-A[Terraform Configuration]
-
-A --> B[Virtual Network]
-A --> C[Subnets]
-A --> D[Network Security Groups]
-A --> E[Virtual Machine]
-A --> F[Cosmos DB Account]
-A --> G[Supporting Services]
 ```
 ------------------------------------------------------------------------
 
@@ -199,7 +168,7 @@ A[Local Machine]
 
 ------------------------------------------------------------------------
 
-## SSH Connection Screenshot
+## SSH Connection 
 
 ```{=html}
 <p align="center">
