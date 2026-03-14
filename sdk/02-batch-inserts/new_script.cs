@@ -13,6 +13,8 @@ public class Program
 
         CosmosClient client = new CosmosClient(endpoint, key);
 
+        double totalRU = 0;
+
         FeedIterator<DatabaseProperties> dbIterator =
             client.GetDatabaseQueryIterator<DatabaseProperties>();
 
@@ -21,6 +23,7 @@ public class Program
             foreach (var dbProps in await dbIterator.ReadNextAsync())
             {
                 Database database = client.GetDatabase(dbProps.Id);
+
                 Console.WriteLine($"\nDatabase: {dbProps.Id}");
 
                 FeedIterator<ContainerProperties> containerIterator =
@@ -31,6 +34,8 @@ public class Program
                     foreach (var containerProps in await containerIterator.ReadNextAsync())
                     {
                         Console.WriteLine($"  Container: {containerProps.Id}");
+
+                        double containerRU = 0;
 
                         string pkPath = containerProps.PartitionKeyPath;
                         string pkProperty = pkPath.TrimStart('/');
@@ -86,6 +91,9 @@ public class Program
                             Console.WriteLine(
                                 $"      RU Charge: {response.RequestCharge:0.00}");
 
+                            containerRU += response.RequestCharge;
+                            totalRU += response.RequestCharge;
+
                             if (!response.IsSuccessStatusCode)
                             {
                                 Console.WriteLine($"      Error: {response.ErrorMessage}");
@@ -94,9 +102,13 @@ public class Program
 
                             batchNumber++;
                         }
+
+                        Console.WriteLine($"  Total RU for container {containerProps.Id}: {containerRU:0.00}");
                     }
                 }
             }
         }
+
+        Console.WriteLine($"\nTOTAL RU ACROSS ALL CONTAINERS: {totalRU:0.00}");
     }
 }
