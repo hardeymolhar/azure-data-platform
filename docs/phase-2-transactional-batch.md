@@ -126,8 +126,93 @@ If any operation within the batch fails:
 ![Dedicated Throughput Configuration](images/batch-transaction-confirmation.png)
 
 
+# OBSERVABILITY - RU CONSUMPTION REPORT
 
+![Log Analytics Screenshot](images/log-analytics-monitor.png)
 
+## Why Did this transaction consume almost 900 RU?
+
+```bash
+The code consumes ~895 RU because it performs two transactional batches inserting 200 documents into a single logical partition in Azure Cosmos DB.
+```
+
+The following are factors that drive RU consumption in azure cosmosdb
+```mermaid
+graph TD
+    RU[RU Consumption Drivers] --> Writes[Number of Writes]
+    RU --> Size[Document Size]
+    RU --> Index[Indexing Overhead]
+    RU --> Batch[Transactional Batch Overhead]
+    RU --> Properties[Number of Indexed Properties]
+```
+
+```bash
+The items use the default cosmosdb indexing policy which contains many **indexed fields**, so Cosmos must write the document + update multiple indexes, which increases RU consumption.
+```
+
+Cost Breakdown
+
+RU Drivers
+```mermaid
+bar chart
+    title RU Cost per Document
+    x-axis Document Size (KB)
+    y-axis Approx RU
+    "1 KB" : 6
+    "2 KB" : 9
+    "Batch Overhead" : 50
+```
+
+Each document contain multiple fields:
+```mermaid
+graph LR
+    Doc[Document] --> id[id]
+    Doc --> name[name]
+    Doc --> category[category]
+    Doc --> price[price]
+    Doc --> quantity[quantity]
+    Doc --> status[status]
+    Doc --> region[region]
+    Doc --> rating[rating]
+    Doc --> createdAt[createdAt]
+    Doc --> partitionKey[partitionKey]
+    
+    id --> Index1[Indexed]
+    name --> Index2[Indexed]
+    category --> Index3[Indexed]
+    price --> Index4[Indexed]
+    quantity --> Index5[Indexed]
+    status --> Index6[Indexed]
+    region --> Index7[Indexed]
+    rating --> Index8[Indexed]
+    createdAt --> Index9[Indexed]
+    partitionKey --> Index10[Indexed]
+```
+
+RU Consumption Calculation
+```mermaid
+flowchart TD
+    A[Insert Operation] --> B[~4.5 RU per document]
+    B --> C[200 Documents]
+    C --> D[≈ 900 RU Total]
+    D --> E[Observed ~895 RU]
+Cosmos indexes each property by default.
+```
+
+So each insert likely costs around:
+```bash
+
+- 4–5 RU per document
+
+- 200 documents × ~4.5 RU ≈ 900 RU
+
+- Which matches the observed ~895 RU.
+```
+
+The next phases hopes to answer the engineering question
+```bash
+How might we reduce RU consumption while optimizing container indexing policy for common operations and specific queries
+```
 
 # Key Lessons From Phase 2
 
