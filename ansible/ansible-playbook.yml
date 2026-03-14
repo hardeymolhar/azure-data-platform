@@ -91,7 +91,7 @@
         group: root
         mode: '0644'
 
-    - name: Run Cosmos SDK connection example (04-sdk-connect)
+    - name: Connect to Cosmos DB
       ansible.builtin.shell: |
         # ensure dotnet path is available for this non-login shell
         source /etc/profile.d/dotnet.sh || true
@@ -111,7 +111,7 @@
 
 
 
-    - name: Run Cosmos SDK transactional batch example (07-sdk-batch)
+    - name: Run Cosmos SDK Batch Insert
       ansible.builtin.shell: |
         dotnet restore
         dotnet add package Microsoft.Azure.Cosmos --version {{ cosmos_nuget_version }}
