@@ -2,47 +2,90 @@
 # ===============
 # Storage Account
 # ===============
-resource "azurerm_storage_account" "storage" {
-  name                     = "prodstorage21151"
-  resource_group_name      = local.primary_rg
-  location                 = local.primary_location
+
+
+# Use a dynamic for_each so any file dropped into the scripts/ folder is automatically
+# uploaded as a blob. This is more maintainable than hardcoding each blob resource.
+# The older approach (below, currently commented out) required defining each blob
+# explicitly and updating the Terraform configuration whenever a new script was added.
+
+resource "azurerm_storage_account" "storage_accounts" {
+  for_each = local.storage_accounts
+
+  name                     = each.value.name
+  resource_group_name      = azurerm_resource_group.platform.name
+  location                 = azurerm_resource_group.platform.location
+
   account_tier             = "Standard"
   account_replication_type = "LRS"
 
-  public_network_access_enabled = true
-  https_traffic_only_enabled    = true
+  account_kind             = "StorageV2"
+  min_tls_version          = "TLS1_2"
+
+  allow_blob_public_access = false
+
+  
+  network_rules {
+
+    default_action = "Deny"
+
+    ip_rules = [
+      "${local.client_ip}/32"
+    ]
+
+    bypass = [
+      "AzureServices"
+    ]
+  }
 }
 
 
-resource "azurerm_storage_container" "account" {
-  name                  = "account"
-  storage_account_name  = azurerm_storage_account.storage.name
+
+
+resource "azurerm_storage_container" "containers" {
+  for_each = azurerm_storage_account.storage_accounts
+
+  name                  = each.key
+  storage_account_name  = each.value.name
   container_access_type = "private"
-
-
 }
 
-resource "azurerm_storage_blob" "init_script" {
-  name                   = "cloud-init.yaml"
-  storage_account_name   = azurerm_storage_account.storage.name
-  storage_container_name = azurerm_storage_container.account.name
+
+
+resource "azurerm_storage_blob" "scripts" {
+  for_each = fileset("${path.module}/scripts", "*")
+
+  name                   = each.value
+  storage_account_name   = azurerm_storage_account.storage_accounts["scripts"].name
+  storage_container_name = azurerm_storage_container.containers["scripts"].name
   type                   = "Block"
-  source                 = "${path.module}/config-files/cloud-init.yaml"
 
-  depends_on = [
-    azurerm_storage_container.account
-  ]
+  source = "${path.module}/scripts/${each.value}"
 }
 
-resource "azurerm_storage_blob" "init_script_env" {
-  name                   = "provision-cosmos-sdk-vm.sh"
-  storage_account_name   = azurerm_storage_account.storage.name
-  storage_container_name = azurerm_storage_container.account.name
-  type                   = "Block"
-  source                 = "${path.module}/config-files/provision-cosmos-sdk-vm.sh"
 
-  depends_on = [
-    azurerm_storage_blob.init_script
-  ]
-}
+
+#resource "azurerm_storage_blob" "init_script" {
+#  name                   = "cloud-init.yaml"
+#  storage_account_name   = azurerm_storage_account.storage.name
+#  storage_container_name = azurerm_storage_container.account.name
+#  type                   = "Block"
+#  source                 = "${path.module}/scripts/cloud-init.yml"
+#
+#  depends_on = [
+#    azurerm_storage_container.account
+#  ]
+#}
+
+#resource "azurerm_storage_blob" "init_script_env" {
+#  name                   = "dotnet-install.sh"
+#  storage_account_name   = azurerm_storage_account.storage.name
+# storage_container_name = azurerm_storage_container.account.name
+# type                   = "Block"
+# source                 = "${path.module}/scripts/bootstrapped-dotnet-installation.sh"
+
+#  depends_on = [
+#    azurerm_storage_blob.init_script
+#  ]
+# }
 
