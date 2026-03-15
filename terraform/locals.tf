@@ -11,6 +11,18 @@ locals {
   ])
 }
 
+locals {
+  storage_accounts = {
+    multimedia = {
+      name = "Multimedia12151"
+    }
+
+    scripts = {
+      name = "scripts21151"
+    }
+  }
+}
+
 
 locals {
   client_ip = chomp(data.http.client_ip.response_body)
