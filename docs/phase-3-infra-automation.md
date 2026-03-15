@@ -140,7 +140,7 @@ A[Local Environment]
 
 ------------------------------------------------------------------------
 
-## Ping Test to VM
+## Ping Test to VM Using Ansible
 
 ```{=html}
 <p align="center">
@@ -170,13 +170,8 @@ A[Local Machine]
 
 ## SSH Connection 
 
-```{=html}
-<p align="center">
-```
-`<img src="images/ssh-connection.png" width="900">`{=html}
-```{=html}
-</p>
-```
+![Cosmos DB SDK Architecture](images/SSH-Confirmation.gif)
+
 Successful SSH access confirms that the VM is ready for configuration.
 
 ------------------------------------------------------------------------
@@ -202,6 +197,7 @@ D --> E[Execute .NET SDK Application]
 
 E --> F[Transactional Batch Inserts]
 ```
+![Cosmos DB SDK Architecture](images/Ansible-Config.gif)
 
 ------------------------------------------------------------------------
 

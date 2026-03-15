@@ -1,16 +1,27 @@
 # Phase 2 — Transactional Batch Operations for Bulk Inserts
 
-## Problem Context
+```mermaid
+flowchart LR
+A[Problem<br>High RU + Network Overhead]
+--> B[Solution<br>Transactional Batch]
+--> C[Implementation<br>SDK Batch Insert]
+--> D[Observation<br>~895 RU Consumption]
+--> E[Next Phase<br>Optimize Indexing]
+```
 
-Inserting documents individually increases network overhead and Request Unit (RU) consumption.
+## Problem --> Outcome
 
-Azure Cosmos DB provides **Transactional Batch**, allowing multiple operations to execute atomically within a single partition key.
+**Problem**: Per-document inserts produced excessive network overhead and higher RU cost.
+
+**Solution chosen**: TransactionalBatch for atomic multi-operation writes within the same partition, grouped into batches of 100 items. This reduces network round trips and enforces atomicity for batch items.
+
+**Outcome observed**: Two batches inserting a total of 200 documents consumed ~895 RU (≈4.5 RU/document), matching the expected RU model given default indexing and document shapes.
 
 ---
 
 ## Engineering Decisions
 
-### Use Transactional Batch
+### Decision 1 - Use Transactional Batch
 
 Transactional batch was selected to:
 
@@ -20,11 +31,47 @@ Transactional batch was selected to:
 
 ---
 
-### Throughput Model Selection
+### Decision 2 - Throughput Model Selection
 
-Azure Cosmos DB allows throughput to be configured either at the **container level (dedicated throughput)** or at the **database level (shared throughput)**.
+```mermaid
+xychart-beta
+    title Dedicated vs Shared Throughput Tradeoff
+    x-axis ["Cost Efficiency","Isolation","Operational Simplicity","Scalability"]
+    y-axis Score 0 --> 10
+    bar [9,3,9,6]
+    bar [4,9,5,9]
 
-#### Throughput Architecture
+```
+<div align="center">
+
+Legend
+
+| Color | Throughput Model |
+|------|------------------|
+| Green | Dedicated Throughput |
+| Blue | Shared Throughput |
+
+#### Interpretation
+
+Shared throughput scores higher for :
+ cost efficiency and 
+ operational simplicity 
+
+Why?     because containers share a single RU pool.
+
+Dedicated throughput scores higher for 
+ isolation 
+ scalability
+
+Why?     each container has guaranteed RU allocation.
+
+
+
+
+</div>
+
+
+### Throughput Architecture
 
 ```mermaid
 flowchart LR
@@ -47,35 +94,36 @@ D --> F
 D --> G
 ```
 
-Key difference:
-
-Dedicated throughput: each container has its own RU pool
-Shared throughput: containers consume RU/s from a common database pool
 
 
-### Decision Summary
-In this project, **database-level shared throughput** was intentionally selected.
+
+### Final Decision
+```bash
+Because this project runs inside a controlled lab environment, cost efficiency and simplicity were prioritized 
+and it led to intentionally choosing database level shared throughput
+```
 
 | Factor | Reason |
 |-------|--------|
-| Predictable Workload | Transactional batch operations generate controlled write volumes |
-| Environment | Project executed in a lab / sandbox for SDK validation |
-| Cost Efficiency | Shared RU pool prevents unused capacity across containers |
+| Predictable Workload | Batch operations generate controlled write volumes |
+| Lab Environment | Not a production workload |
+| Cost Efficiency | Prevents unused RU allocation |
 ---
 
-### Dedicated Throughput (Container Level)
+# Configuration Screenshots
+
+Throughputs were chosen one after the order in order to demonstrate how they actually work and look like in Azure
+
+## Dedicated Throughput (Container Level)
 
 ![Dedicated Throughput Configuration](images/dedicated-throughput.png)
 
-Dedicated throughput assigns RU/s directly to a specific container. Each container must have its own provisioned throughput, which can lead to unused capacity if workloads are inconsistent.
-
 ---
 
-### Shared Throughput (Database Level)
+## Shared Throughput Configuration
 
 ![Shared Throughput Configuration](images/shared-throughput.png)
 
-Shared throughput provisions RU/s at the database level, allowing multiple containers to share the same throughput pool. This improves resource utilization and reduces operational overhead.
 
 ---
 
@@ -121,49 +169,48 @@ If any operation within the batch fails:
 
 
 
-![Dedicated Throughput Configuration](images/transaction-batch.png)
+![Dedicated Throughput Configuration](images/Batch-Insert-With-RU.gif)
 
-![Dedicated Throughput Configuration](images/batch-transaction-confirmation.png)
+![Dedicated Throughput Configuration](images/Batch-Insert.gif)
 
 
 # OBSERVABILITY - RU CONSUMPTION REPORT
 
-![Log Analytics Screenshot](images/log-analytics-monitor.png)
+## CosmosDB Write Lifecycle 
 
-## Why Did this transaction consume almost 900 RU?
+When a client application inserts or updates a document in Azure Cosmos DB, the request travels through several internal components before the operation completes. Each stage performs work that contributes to the final Request Unit (RU) charge, which represents the amount of compute, memory, and I/O resources consumed by the operation.
+
+```mermaid
+flowchart LR
+Client[Application Request]
+--> Router[Partition Router]
+--> Storage[Storage Engine]
+--> Index[Index Updates]
+--> RU[RU Charge]
+```
+
+## RU Consumption Calculation
+When performing write operations in Azure Cosmos DB, each request consumes Request Units (RU). A Request Unit represents the normalized cost of performing a database operation based on the amount of system resources consumed, including CPU, memory, disk I/O, and indexing overhead.
+
+In this experiment, RU consumption was measured during the insertion of 200 documents using TransactionalBatch operations.
+
+```mermaid
+flowchart LR
+    A[Insert Operation] --> B[~4.5 RU per document]
+    B --> C[200 Documents]
+    C --> D[≈ 900 RU Total]
+    D --> E[Observed ~895 RU]
+```
+
+![Log Analytics Screenshot](images/Log-Analytics.gif)
+
+## Why Did this transaction consume 895.24 RU?
 
 ```bash
-The code consumes ~895 RU because it performs two transactional batches inserting 200 documents into a single logical partition in Azure Cosmos DB.
+The transaction consumes 895.24 RU because it performs two transactional batches inserting 200 documents into a single logical partition in Azure Cosmos DB.
+Also, The items use the default cosmosdb indexing policy which contains many **indexed fields**, so Cosmos must write the document + update multiple indexes, which increases RU consumption.
 ```
-
-The following are factors that drive RU consumption in azure cosmosdb
-```mermaid
-graph TD
-    RU[RU Consumption Drivers] --> Writes[Number of Writes]
-    RU --> Size[Document Size]
-    RU --> Index[Indexing Overhead]
-    RU --> Batch[Transactional Batch Overhead]
-    RU --> Properties[Number of Indexed Properties]
-```
-
-```bash
-The items use the default cosmosdb indexing policy which contains many **indexed fields**, so Cosmos must write the document + update multiple indexes, which increases RU consumption.
-```
-
-Cost Breakdown
-
-RU Drivers
-```mermaid
-bar chart
-    title RU Cost per Document
-    x-axis Document Size (KB)
-    y-axis Approx RU
-    "1 KB" : 6
-    "2 KB" : 9
-    "Batch Overhead" : 50
-```
-
-Each document contain multiple fields:
+From the index policy shown above under cosmosdb data explorer, It is apparent that all paths are indexed:
 ```mermaid
 graph LR
     Doc[Document] --> id[id]
@@ -189,25 +236,16 @@ graph LR
     partitionKey --> Index10[Indexed]
 ```
 
-RU Consumption Calculation
+The following are factors that drive RU consumption in azure cosmosdb
 ```mermaid
-flowchart TD
-    A[Insert Operation] --> B[~4.5 RU per document]
-    B --> C[200 Documents]
-    C --> D[≈ 900 RU Total]
-    D --> E[Observed ~895 RU]
-Cosmos indexes each property by default.
+graph TD
+    RU[RU Consumption Drivers] --> Writes[Number of Writes]
+    RU --> Size[Document Size]
+    RU --> Index[Indexing Overhead]
+    RU --> Batch[Transactional Batch Overhead]
+    RU --> Properties[Number of Indexed Properties]
 ```
 
-So each insert likely costs around:
-```bash
-
-- 4–5 RU per document
-
-- 200 documents × ~4.5 RU ≈ 900 RU
-
-- Which matches the observed ~895 RU.
-```
 
 The next phases hopes to answer the engineering question
 ```bash
