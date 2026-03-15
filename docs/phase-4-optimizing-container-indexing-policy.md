@@ -1,4 +1,5 @@
-# Phase 4 - Optimizing an Azure Cosmos DB for NoSQL container’s indexing policy for common operations
+# Phase 4 — Cosmos DB Indexing Strategy & Terraform Module Refactoring
+ 
 
 ## Architecture Diagram
 
@@ -71,3 +72,35 @@ Phase 4                             Optimize CosmosDB index policy
                                        | Cosmos DB Indexing |
 -----------------------------------------------------------------------
 ```
+
+
+
+
+
+
+
+
+LEGACY IMPLEMENTATION (INITIAL DESIGN)
+
+Originally, a single storage account was provisioned primarily to store
+automation artifacts such as bootstrap scripts and configuration files.
+
+At this stage of the project, Terraform state was still stored locally.
+This approach worked for initial experimentation but presented several
+limitations:
+
+- State files were stored locally on the developer machine
+- No centralized state management
+- Risk of state drift or corruption
+- Not suitable for collaborative workflows
+
+As the infrastructure evolved and reproducibility became more important,
+the design was upgraded to use a **remote Terraform backend stored in
+Azure Blob Storage**. This allowed Terraform state to be centrally managed
+and automatically locked during operations.
+
+The implementation below is preserved for documentation purposes to
+illustrate the early design phase of the project.
+
+Replaced by:
+Terraform Remote State Backend using Azure Storage.

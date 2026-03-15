@@ -1,25 +1,45 @@
-# Phase 3 --- Automated Infrastructure Deployment and System Orchestration
+# Phase 3 --- Automated Infrastructure Deployment and System Orchestration Using Terraform Remote state
+
+Phase 3 introduces infrastructure automation to replace the manual
+environment used in earlier phases.
+
+Terraform provisions Azure infrastructure while Ansible configures
+the virtual machine and prepares the runtime environment required
+for executing the Cosmos DB SDK ingestion application.
+
+This phase transforms the project from manual experimentation
+into a reproducible deployment pipeline.
+
+
+| Phase         | Focus                            |
+| ------------- | -------------------------------- |
+| Phase 1       | Can the SDK connect              |
+| Phase 2       | Can ingestion be optimized       |
+| Phase 3       | Can the environment be automated |
+| Observability | What does the system cost        |
 
 
 
-## Project Progression
+
+```mermaid
+
+flowchart LR
+
+Dev[Developer / CI Pipeline]
+Dev --> TF[Terraform Apply]
+
+TF --> Storage[Azure Storage Account\nRemote State]
+
+TF --> Infra[Azure Infrastructure]
+
+Infra --> Cosmos[Cosmos DB]
+Infra --> VM[Linux VM]
+Infra --> Monitor[Log Analytics]
+
+VM --> Ansible[Ansible Configuration]
+
 ```
-  -----------------------------------------------------------------------
-  Phase                               Focus
-  ----------------------------------- -----------------------------------
-  Phase 1                             Establish Cosmos DB connectivity
-                                       | .NET SDK |
 
-  Phase 2                             Implement high-efficiency ingestion 
-                                       | Transactional Batch |
-
-  Phase 3                             Automate infrastructure and deployment
-                                       | Terraform, Ansible |
-  -----------------------------------------------------------------------
-  ```
-
-Phase 3 transitions the project from manual testing to automated
-deployment and execution.
 
 ------------------------------------------------------------------------
 
@@ -122,7 +142,7 @@ terraform graph | dot -Tpng > terraform-graph.png
 Infrastructure provisioning is automated using:
 
 ```bash
-azure-data-platform/deployment-pipeline.sh
+azure-data-platform/scripts/deployment-pipeline.sh
 ```
 ------------------------------------------------------------------------
 
@@ -137,21 +157,6 @@ A[Local Environment]
 --> C[SSH Access]
 --> D[Ready for Configuration]
 ```
-
-------------------------------------------------------------------------
-
-## Ping Test to VM Using Ansible
-
-```{=html}
-<p align="center">
-```
-`<img src="images/ping-vm-test.png" width="900">`{=html}
-```{=html}
-</p>
-```
-The ping test confirms that the virtual machine is reachable through the
-configured network.
-
 ------------------------------------------------------------------------
 
 # SSH Access to the VM
@@ -247,11 +252,11 @@ SDK --> TEST[Ingestion Tests]
 ```
 
 This adjustment enabled:
-```bash
+
 SDK execution
 ingestion testing
 application connectivity
-```
+
 while still allowing the infrastructure pipeline to be demonstrated.
 Terraform configuration for this design exists in the project:
 
@@ -347,7 +352,9 @@ A script was created to retrieve Cosmos DB keys using the Azure CLI.
     fetch-keys.sh
 
 This script retrieves the primary key directly from the Cosmos DB
-account.
+account. The credentials were then exported using environment variables.
+
+Ansible solved this problem
 
 ------------------------------------------------------------------------
 
@@ -358,7 +365,7 @@ were configured with the expected partition keys.
 
 A validation script was implemented:
 
-    fetch_partition_key.sh
+    fetch-partition-key.sh
 
 This script:
 
@@ -373,41 +380,28 @@ structure.
 
 ## 4. VM Environment Preparation
 
-The VM initially lacked the environment required to execute the SDK
-application.
+## VM Configuration
 
-Initial attempts using ad‑hoc scripts became complex and difficult to
-maintain. After spending significant time attempting to make these
-scripts idempotent, the approach was replaced with Ansible playbooks.
+The provisioned VM initially lacked the runtime environment required to execute the Cosmos DB SDK application.
 
-Ansible was introduced to:
+My initial approach used ad-hoc shell scripts to install dependencies and configure the environment. While functional, these scripts quickly became difficult to maintain and unreliable when rerun.
 
--   install runtime dependencies
--   configure the development environment
--   prepare the system for application execution
+After spending significant time attempting to make the scripts idempotent, it became clear that a configuration management tool would provide a more maintainable solution. This led to the adoption of **Ansible playbooks**.
 
-These configuration files are stored in:
+Ansible was used to:
 
-    terraform/config-files/
+- install required runtime dependencies
+- configure the development environment
+- prepare the VM to execute the ingestion application
+
+The adhoc configuration scripts and ansible playbooks are located in:
+
+```bash
+\scripts\bootstraped-dotnet-installation.sh & ansible\ansible-playbook.yml
+```
 
 ------------------------------------------------------------------------
 
-# Cosmos DB Application Execution
-
-Once the environment is prepared, the .NET application connects to
-Cosmos DB and executes batch operations.
-
-```{=html}
-<p align="center">
-```
-`<img src="images/sdk-batch-run.png" width="900">`{=html}
-```{=html}
-</p>
-```
-The ingestion logic uses transactional batch operations validated in
-Phase 2.
-
-------------------------------------------------------------------------
 
 # End-to-End Workflow
 
@@ -428,26 +422,14 @@ A[Terraform Deploy Infrastructure]
 ```
 
 ------------------------------------------------------------------------
+| Area | Result |
+|-----|------|
+| Infrastructure | Automated with Terraform |
+| Server Setup | Configured via Ansible |
+| Connectivity | SSH + network validation |
+| Deployment | Reproducible environment |
+| Data Ingestion | Transactional batch automation |
 
-# Measurable Outcome
-
-  -----------------------------------------------------------------------
-  Area                             Result
-  -------------------------------- --------------------------------------
-  Infrastructure                   Automated deployment using Terraform
-
-  Server Setup                     Automated VM configuration using
-                                   Ansible
-
-  Connectivity                     Network access validated through ping
-                                   and SSH
-
-  Deployment                       Environment reproducible across
-                                   deployments
-
-  Data Ingestion                   Transactional batch operations
-                                   executed automatically
-  -----------------------------------------------------------------------
 
 ------------------------------------------------------------------------
 
