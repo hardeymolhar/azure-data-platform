@@ -13,7 +13,7 @@ data "http" "client_ip" {
 #======
 
 data "azurerm_storage_account_sas" "script_sas" {
-  connection_string = azurerm_storage_account.storage.primary_connection_string
+  connection_string = azurerm_storage_account.storage_accounts["multimedia"].primary_connection_string
   https_only        = true
 
   resource_types {

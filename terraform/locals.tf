@@ -14,7 +14,7 @@ locals {
 locals {
   storage_accounts = {
     multimedia = {
-      name = "Multimedia12151"
+      name = "multimedia12151"
     }
 
     scripts = {
