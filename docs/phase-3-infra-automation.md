@@ -107,6 +107,8 @@ This made the environment difficult to recreate consistently.
 
 ------------------------------------------------------------------------
 
+
+
 # Engineering Flow
 
 The automation introduced in Phase 3 follows a structured progression.
@@ -127,6 +129,7 @@ D --> E[Transactional Batch Inserts]
 ------------------------------------------------------------------------
 
 # Infrastructure Deployment
+
 
 ## Terraform Resource Dependency Graph
 
@@ -435,10 +438,38 @@ A[Terraform Deploy Infrastructure]
 
 # Key Lessons From Phase 3
 
+ ## Bootstrapping Remote State Requires a Controlled Initialization Sequence
+
+The remote backend cannot be enabled until the backend infrastructure exists.
+
+The correct initialization sequence is:
+
+```mermaid
+flowchart LR
+
+A[Bootstrap Terraform] --> B[terraform init -backend=false]
+B --> C[terraform apply]
+
+C --> D[Create Resource Group]
+C --> E[Create Storage Account]
+C --> F[Create Blob Container]
+
+F --> G[Remote State Backend Ready]
+
+G --> H[Initialize Main Terraform]
+
+H --> I[cd terraform]
+I --> J[terraform init]
+
+J --> K[Terraform Uses Remote State]
+```
+
 ## Infrastructure Automation Improves Reliability
 
 Replacing manual setup with automated workflows allows the environment
 to be recreated consistently.
+
+
 
 ## Design Must Adapt to Constraints
 
