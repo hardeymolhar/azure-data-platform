@@ -4,7 +4,7 @@
  */
 terraform {
   backend "azurerm" {
-    resource_group_name  = "rg_sb_eastus_308450_1_177357878126"
+    resource_group_name  = "rg_sb_westus_308450_2_177366024617"
     storage_account_name = "tfstate21151"
     container_name       = "tfstate"
     key                  = "azure-data-platform.tfstate"
