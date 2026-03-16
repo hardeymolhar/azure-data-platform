@@ -53,7 +53,7 @@ E[Service Endpoints]
 end
 
 subgraph Compute
-F[Azure Virtual Machine]
+F[RHEL Linux VM <br> 9-lvm-gen2]
 end
 
 subgraph Configuration
@@ -231,8 +231,50 @@ D --> E[Main Terraform Initialization]
 E --> F[Infrastructure Deployment]
 ```
 
-<p align="center"> <img src="docs/images/remote-backend.gif" width="900"> </p>
+<p align="center"> <img src="docs/images/remote-backend-full-demo.gif" width="900"> </p>
 
+
+### Design Evolution Note
+
+The initial infrastructure deployment in this project was executed using Terraform's default **local state** configuration.
+
+After validating the infrastructure automation workflow, the architecture was reviewed from a **security and operational reliability perspective**. Storing Terraform state locally on a developer workstation introduces several risks:
+
+* Sensitive infrastructure metadata may be exposed.
+* Concurrent infrastructure operations cannot be coordinated.
+* State corruption can occur if multiple deployments run simultaneously.
+
+To address these concerns, the project was updated to use **Terraform remote state stored in Azure Blob Storage**.
+
+<br>
+<br>
+<p align="center"> INITIAL INFRASTRUCTURE DEPLOYMENT </p>
+
+
+```mermaid
+flowchart LR
+
+A[Terraform CLI]
+--> B[Local State File]
+
+A --> C[Azure Infrastructure]
+```
+<br>
+<br>
+<p align="center"> SECURITY REVIEW → INTRODUCED REMOTE STATE BACKEND </p>
+
+
+
+```mermaid
+flowchart LR
+
+A[Terraform CLI]
+--> B[Azure Storage Backend]
+
+B --> C[Blob Container<br>Remote State]
+
+A --> D[Azure Infrastructure]
+```
 
 # Deployment Validation 
 The deployment workflow validates each stage of the platform.
