@@ -13,8 +13,8 @@ resource "azurerm_storage_account" "storage_accounts" {
   for_each = local.storage_accounts
 
   name                     = each.value.name
-  resource_group_name      = azurerm_resource_group.platform.name
-  location                 = azurerm_resource_group.platform.location
+  resource_group_name      = local.primary_rg
+  location                 = local.primary_location
 
   account_tier             = "Standard"
   account_replication_type = "LRS"
@@ -22,15 +22,14 @@ resource "azurerm_storage_account" "storage_accounts" {
   account_kind             = "StorageV2"
   min_tls_version          = "TLS1_2"
 
-  allow_blob_public_access = false
-
+  allow_nested_items_to_be_public = false
   
   network_rules {
 
     default_action = "Deny"
 
     ip_rules = [
-      "${local.client_ip}/32"
+      "${local.client_ip}/30"
     ]
 
     bypass = [
