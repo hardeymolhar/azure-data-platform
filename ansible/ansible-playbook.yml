@@ -12,8 +12,6 @@
     dotnet_install_dir: "/usr/local/dotnet"
     cosmos_repo: "https://github.com/hardeymolhar/azure-data-platform.git"
     repo_dest: "/home/hardeymolhar/app"
-    # NuGet package version from your script (you can bump this if desired)
-    cosmos_nuget_version: "3.22.1"
 
   pre_tasks:
     - name: Fail if required vars are missing
@@ -97,7 +95,6 @@
         source /etc/profile.d/dotnet.sh || true
         source /etc/profile.d/cosmos.sh || true
         dotnet restore
-        dotnet add package Microsoft.Azure.Cosmos --version {{ cosmos_nuget_version }}
         dotnet build
         dotnet run
       args:
@@ -114,7 +111,6 @@
     - name: Run Cosmos SDK Batch Insert
       ansible.builtin.shell: |
         dotnet restore
-        dotnet add package Microsoft.Azure.Cosmos --version {{ cosmos_nuget_version }}
         dotnet build
         dotnet run
       args:
