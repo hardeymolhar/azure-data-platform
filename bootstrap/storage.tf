@@ -1,7 +1,7 @@
 resource "azurerm_storage_account" "tfstate" {
   name                = "tfstate21151"
-  resource_group_name = "rg_sb_eastus_308450_1_177357878126"
-  location            = "eastus"
+  resource_group_name = "rg_sb_westus_308450_2_177366024617"
+  location            = "westus"
 
   account_tier             = "Standard"
   account_replication_type = "LRS"
