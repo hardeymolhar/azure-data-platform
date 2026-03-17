@@ -1,6 +1,6 @@
 resource "azurerm_storage_account" "tfstate" {
   name                = "tfstate21151"
-  resource_group_name = "rg_sb_westus_308450_2_177366024617"
+  resource_group_name = "rg_sb_westus_308450_2_177374335056"
   location            = "westus"
 
   account_tier             = "Standard"
