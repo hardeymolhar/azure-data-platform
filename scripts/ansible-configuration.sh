@@ -24,7 +24,7 @@ EOT
 
 echo "Running Ansible playbook..."
 
-ansible-playbook ../ansible/ansible-playbook.yml \
+ansible-playbook ../ansible/ansible-playbook-bkp.yml \
 --extra-vars "cosmos_endpoint=$COSMOS_ENDPOINT cosmos_key=$COSMOS_KEY"
 
 echo "Pipeline completed successfully."
