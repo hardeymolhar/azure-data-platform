@@ -17,8 +17,8 @@ locals {
       name = "multimedia12151"
     }
 
-    scripts = {
-      name = "scripts21151"
+    tfstate = {
+      name = "tfstate21151"
     }
   }
 }

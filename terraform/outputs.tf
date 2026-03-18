@@ -25,3 +25,8 @@ output "vm_name" {
   description = "Name of the provisioned VM"
   value       = azurerm_linux_virtual_machine.vm.name
 }
+
+output "storage_account" {
+  description = "Name of the storage accounts"
+  value       = { for key, sa in azurerm_storage_account.storage_accounts : key => sa.name }
+}
