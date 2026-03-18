@@ -1,7 +1,7 @@
 resource "azurerm_storage_account" "tfstate" {
   name                = "tfstate21151"
-  resource_group_name = "rg_sb_westus_308450_2_177374335056"
-  location            = "westus"
+  resource_group_name = local.secondary_rg
+  location            = local.secondary_location
 
   account_tier             = "Standard"
   account_replication_type = "LRS"
@@ -25,7 +25,8 @@ resource "azurerm_storage_account" "tfstate" {
 
 
 resource "azurerm_storage_container" "tfstate" {
-  name                  = "tfstate"
+  for_each              = toset(["prod-tfstate", "dev-tfstate"])
+  name                  = "terraform-state-files"
   storage_account_name  = azurerm_storage_account.tfstate.name
   container_access_type = "private"
 }
