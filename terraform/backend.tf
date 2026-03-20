@@ -1,8 +1,8 @@
 /* Use this if you want total control over your backend */
 terraform {
   backend "azurerm" {
-    resource_group_name  = "rg_sb_westus_308450_2_177384235110"
-    storage_account_name = "tfstate21151"
+    resource_group_name  = "rg_sb_westus_308450_2_177395269818"
+    storage_account_name = "tfstate2115111"
     container_name       = "terraform-state-files"
   }
 }

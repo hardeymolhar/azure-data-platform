@@ -11,6 +11,13 @@ locals {
   ])
 }
 
+/*Introduced this local as part of attempt in understanding workspaces*/
+locals {
+  environment = terraform.workspace
+}
+
+
+
 locals {
   storage_accounts = {
     multimedia = {

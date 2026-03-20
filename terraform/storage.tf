@@ -51,7 +51,7 @@ resource "azurerm_storage_container" "containers" {
 
 
 
-resource "azurerm_storage_blob" "scripts" {
+/*resource "azurerm_storage_blob" "scripts" {
   for_each = fileset("${path.module}/scripts", "*")
 
   name                   = each.value
@@ -60,7 +60,7 @@ resource "azurerm_storage_blob" "scripts" {
   type                   = "Block"
 
   source = "${path.module}/scripts/${each.value}"
-}
+} */
 
 
 
