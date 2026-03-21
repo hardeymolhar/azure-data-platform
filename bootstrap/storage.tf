@@ -1,5 +1,5 @@
 resource "azurerm_storage_account" "bootstrap" {
-  name                     = "tfstate2115111"
+  name                     = "tfstate225222"
   resource_group_name      = local.secondary_rg
   location                 = local.primary_location
   account_tier             = "Standard"
@@ -22,7 +22,7 @@ resource "azurerm_storage_account" "bootstrap" {
   }
 
   network_rules {
-    default_action = "Deny"
+    default_action = "Allow"
 
     ip_rules = [
       "${local.client_ip}/30"

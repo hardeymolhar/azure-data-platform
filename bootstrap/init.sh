@@ -1,6 +1,13 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
+# Resolve bootstrap directory
+INIT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+
+
+cd "$INIT_DIR"
+
+
 echo -e "\e[33mInitializing Terraform without backend...\e[0m"
 terraform init -backend=false
 
