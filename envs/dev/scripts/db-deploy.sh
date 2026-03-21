@@ -12,23 +12,23 @@ echo -e "\e[33mEnvironment: $ENV\e[0m"
 # ----------------------------------------
 
 
-terraform -chdir=../envs/prod/terraform init \
+terraform -chdir=../terraform init \
 -backend-config="key=${ENV}.tfstate"
 
 echo -e "\e[33mFormatting Terraform files...\e[0m"
-terraform -chdir=../envs/prod/terraform fmt -recursive
+terraform -chdir=../terraform fmt -recursive
 
 echo -e "\e[33mValidating Terraform configuration...\e[0m"
-terraform -chdir=../envs/prod/terraform validate
+terraform -chdir=../terraform validate
 
 echo -e "\e[33mCreating execution plan...\e[0m"
-terraform -chdir=../envs/prod/terraform plan \
+terraform -chdir=../terraform plan \
   -var-file="${ENV}.tfvars" \
   -parallelism=10 \
   -out=tfplan
 
 echo -e "\e[33mApplying Terraform plan...\e[0m"
-terraform -chdir=../envs/prod/terraform apply tfplan
+terraform -chdir=../terraform apply tfplan
 
 # ----------------------------------------
 # ANSIBLE

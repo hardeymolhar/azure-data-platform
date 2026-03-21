@@ -7,7 +7,7 @@ resource "azurerm_network_interface" "nic" {
 
   ip_configuration {
     name                          = "ipconfig"
-    subnet_id                     = azurerm_subnet.subnet["dev-vnet-app-subnet"].id
+    subnet_id                     = azurerm_subnet.subnet["prod-vnet-app-subnet"].id
     private_ip_address_allocation = "Dynamic"
     public_ip_address_id          = azurerm_public_ip.vm_pip.id
 
@@ -49,7 +49,7 @@ resource "azurerm_bastion_host" "bastion" {
 
   ip_configuration {
     name                 = "bastion-ipcfg"
-    subnet_id            = azurerm_subnet.subnet["dev-vnet-AzureBastionSubnet"].id
+    subnet_id            = azurerm_subnet.subnet["prod-vnet-AzureBastionSubnet"].id
     public_ip_address_id = azurerm_public_ip.bastion_pip.id
   }
 }

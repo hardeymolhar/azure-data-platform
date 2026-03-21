@@ -26,14 +26,7 @@ terraform workspace select $ENV 2>/dev/null || terraform workspace new $ENV
 # TERRAFORM EXECUTION
 # ----------------------------------------
 
-
 terraform workspace select $ENV 2>/dev/null || terraform workspace new $ENV
-
-terraform -chdir=../terraform init \
-  -lock=false \
-  -backend-config="key=${ENV}.terraform.tfstate" \
-  -reconfigure
-
 
 echo -e "\e[33mFormatting Terraform files...\e[0m"
 terraform -chdir=../terraform fmt -recursive

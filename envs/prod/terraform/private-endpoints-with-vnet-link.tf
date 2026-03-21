@@ -1,8 +1,8 @@
 resource "azurerm_private_endpoint" "cosmos_pe" {
-  name                = "pev-dev-cosmos"
+  name                = "pev-prod-cosmos"
   resource_group_name = local.primary_rg
   location            = local.primary_location
-  subnet_id           = azurerm_subnet.subnet["dev-vnet-pe-subnet"].id
+  subnet_id           = azurerm_subnet.subnet["prod-vnet-pe-subnet"].id
 
   private_service_connection {
     name                           = "psc-cosmos"
@@ -35,7 +35,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "cosmos_link" {
   name                  = "cosmos-dns-link"
   resource_group_name   = local.primary_rg
   private_dns_zone_name = azurerm_private_dns_zone.cosmos.name
-  virtual_network_id    = azurerm_virtual_network.vnet["dev-vnet"].id
+  virtual_network_id    = azurerm_virtual_network.vnet["prod-vnet"].id
 }
 
 
@@ -56,7 +56,7 @@ resource "azurerm_private_dns_zone_virtual_network_link" "vm_dns_link" {
   name                  = "vm-dns-link"
   resource_group_name   = local.primary_rg
   private_dns_zone_name = azurerm_private_dns_zone.vm_dns.name
-  virtual_network_id    = azurerm_virtual_network.vnet["dev-vnet"].id
+  virtual_network_id    = azurerm_virtual_network.vnet["prod-vnet"].id
 
   registration_enabled = true
 }

@@ -17,6 +17,30 @@ terraform fmt -recursive
 echo -e "\e[33mValidating Configuration...\e[0m"
 terraform validate
 
+: << 'IMPORT_BLOCK'
+
+echo -e "\e[33mImporting Existing Storage Account Configuration into new state...\e[0m"
+
+export MSYS_NO_PATHCONV=1
+terraform import \
+  -var-file="variables.tfvars" \
+  azurerm_storage_account.bootstrap \
+  "/subscriptions/4f6a6eb9-27d0-4ed6-a31c-2bde135e2db6/resourceGroups/rg_sb_westus_308450_2_177410036326/providers/Microsoft.Storage/storageAccounts/tfstate225222"
+
+export MSYS_NO_PATHCONV=1
+
+terraform import \
+  -var-file="variables.tfvars" \
+  'azurerm_storage_container.containers["scripts"]' \
+  "https://tfstate225222.blob.core.windows.net/scripts"
+
+terraform import \
+  -var-file="variables.tfvars" \
+  'azurerm_storage_container.containers["terraform-state-files"]' \
+  "https://tfstate225222.blob.core.windows.net/terraform-state-files"
+
+IMPORT_BLOCK
+
 echo -e "\e[33mPlanning Terraform deployment...\e[0m"
 terraform plan -out=tfplan -var-file=variables.tfvars --parallelism=3
 
