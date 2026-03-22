@@ -1,19 +1,3 @@
-# generate an RSA keypair locally (sensitive)
-resource "tls_private_key" "ssh_key" {
-  algorithm = "RSA"
-  rsa_bits  = 4096
-}
-
-
-
-# optionally persist private key locally (secure the filesystem and terraform state)
-resource "local_file" "private_key" {
-  content         = tls_private_key.ssh_key.private_key_pem
-  filename        = "${path.module}/keys/${var.ssh_key_name}"
-  file_permission = "0600"
-}
-
-
 
 # Linux VM (Gen2, zone aware)
 resource "azurerm_linux_virtual_machine" "vm" {
@@ -35,7 +19,7 @@ resource "azurerm_linux_virtual_machine" "vm" {
 
   admin_ssh_key {
     username   = var.admin_username
-    public_key = tls_private_key.ssh_key.public_key_openssh
+    public_key = file("~/.ssh/dev/dev-key.pub")
   }
   disable_password_authentication = true
 

@@ -12,8 +12,8 @@ echo -e "\e[33mEnvironment: $ENV\e[0m"
 # ----------------------------------------
 
 
-terraform -chdir=../terraform init \
--backend-config="key=${ENV}.tfstate"
+terraform -chdir=../terraform init -reconfigure \
+-backend-config="key=${ENV}.terraform.tfstate"
 
 echo -e "\e[33mFormatting Terraform files...\e[0m"
 terraform -chdir=../terraform fmt -recursive
@@ -27,6 +27,11 @@ terraform -chdir=../terraform plan \
   -parallelism=10 \
   -out=tfplan
 
+echo -e "\e[33mGenerating and Visualizing Terraform Graph...\e[0m"
+terraform -chdir=../terraform graph -type=plan > ${ENV}graph.dot
+dot -Tsvg ${ENV}graph.dot -o ${ENV}graph.svg
+
+
 echo -e "\e[33mApplying Terraform plan...\e[0m"
 terraform -chdir=../terraform apply tfplan
 
@@ -34,8 +39,9 @@ terraform -chdir=../terraform apply tfplan
 # ANSIBLE
 # ----------------------------------------
 
-#echo -e "\e[33mRunning Ansible configuration...\e[0m"
-#MSYS_NO_PATHCONV=1 wsl -d ubuntu /mnt/c/Users/DELL/azure-data-platform/scripts/ansible-configuration.sh
+echo -e "\e[33mRunning Ansible configuration...\e[0m"
+dos2unix ansible-configuration.sh
+./ansible-configuration.sh
 
 : '
 Dynamic Backend (Recommended for CI/CD)

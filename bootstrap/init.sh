@@ -25,7 +25,7 @@ export MSYS_NO_PATHCONV=1
 terraform import \
   -var-file="variables.tfvars" \
   azurerm_storage_account.bootstrap \
-  "/subscriptions/4f6a6eb9-27d0-4ed6-a31c-2bde135e2db6/resourceGroups/rg_sb_westus_308450_2_177410036326/providers/Microsoft.Storage/storageAccounts/tfstate225222"
+  "/subscriptions/4f6a6eb9-27d0-4ed6-a31c-2bde135e2db6/resourceGroups/rg_sb_westus_308450_2_177419938938/providers/Microsoft.Storage/storageAccounts/tfstate225222"
 
 export MSYS_NO_PATHCONV=1
 

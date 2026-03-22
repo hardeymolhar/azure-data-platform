@@ -1,9 +1,6 @@
 #!/bin/bash
 set -euo pipefail
 
-echo "Setting up credentials for Ansible..."
-cp ../terraform/keys/d3v-u6untu-01_key ~/.ssh/
-chmod 600 ~/.ssh/d3v-u6untu-01_key
 
 echo "Initializing Terraform providers..."
 
@@ -19,12 +16,14 @@ echo "Updating Ansible inventory..."
 
 cat > ../ansible/inventory.ini <<EOT
 [cosmos_vm]
-$VM_IP ansible_user=azureuser ansible_ssh_private_key_file=/home/hardeymolhar/.ssh/d3v-u6untu-01_key
+$VM_IP ansible_user=azureuser ansible_ssh_private_key_file=/home/hardeymolhar/.ssh/prod/prod-key
 EOT
 
 echo "Running Ansible playbook..."
-
-ansible-playbook ../ansible/ansible-playbook-bkp.yml \
+ANSIBLE_CONFIG=../ansible/ansible.cfg \
+ansible-playbook \
+../ansible/ansible-playbook-bkp.yml \
 --extra-vars "cosmos_endpoint=$COSMOS_ENDPOINT cosmos_key=$COSMOS_KEY"
 
 echo "Pipeline completed successfully."
+
