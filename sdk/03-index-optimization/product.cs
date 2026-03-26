@@ -7,5 +7,6 @@ public record Product(
     string status,
     string region,
     double rating,
-    DateTime createdAt
+    DateTime createdAt,
+    Tag[]? tags 
 );

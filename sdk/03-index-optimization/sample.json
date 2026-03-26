@@ -1,13 +1,15 @@
 {
-    "id": "<unique-identifier>",
-    "categoryId": "26C74104-40BC-4541-8EF5-9892F7F03D72",
-    "categoryName": "Components, Saddles",
-    "sku": "SE-R581",
-    "name": "LL Road Seat/Saddle",
-    "description": "Dolor amet cupidatat cupidatat ullamco aliquip aute deserunt officia. Cupidatat pariatur dolore consectetur magna exercitation magna cillum ad minim non ullamco fugiat tempor. Fugiat nulla sunt enim exercitation irure excepteur aute fugiat duis pariatur ut.\r\nAliquip pariatur culpa eiusmod dolor laborum aliquip ad laborum qui mollit. In sunt deserunt cillum anim mollit. In labore ad ea labore sint non nulla ipsum reprehenderit do. Pariatur dolor eu minim veniam magna laboris enim laborum quis eiusmod consequat quis ea.\r\nId irure elit quis Lorem ad elit deserunt ea nulla veniam dolor non commodo. Deserunt do duis pariatur proident laboris nostrud laborum qui veniam. Commodo amet laborum sit culpa. Dolor commodo elit velit sint adipisicing. Esse excepteur Lorem cillum tempor incididunt aliquip mollit irure elit veniam irure exercitation et. Cillum duis tempor esse culpa cillum sunt commodo ullamco.\r\nAliquip ullamco ad nulla occaecat mollit incididunt. Dolore irure deserunt consectetur velit amet cupidatat et ullamco mollit nostrud adipisicing laborum deserunt. Ipsum excepteur cupidatat proident magna consequat incididunt nulla labore esse deserunt. Velit officia deserunt quis cillum. Amet anim nulla labore laboris. Sunt duis do magna officia.\r\nCommodo qui excepteur minim elit qui sit mollit nulla sint. Et pariatur esse pariatur dolor nostrud qui magna duis qui incididunt consequat veniam sit. Laboris adipisicing incididunt ea culpa esse duis ullamco minim officia occaecat aliqua minim. Quis ipsum culpa consectetur esse cillum Lorem ut Lorem ea sunt. Laborum anim cupidatat in ipsum.\r\n",
-    "price": 27.12,
-    "tags": [
-      {
+  "id": "<unique-identifier>",
+  "name": "LL Road Seat/Saddle",
+  "category": "electronics",
+  "price": 27.12,
+  "quantity": 25,
+  "status": "active",
+  "region": "us-east",
+  "rating": 4.5,
+  "createdAt": "2026-03-26T10:00:00Z",
+  "tags": [
+    {
         "id": "a0a38e35-c776-4d92-b0d2-b184af3fda15",
         "name": "reprehenderit"
       },
