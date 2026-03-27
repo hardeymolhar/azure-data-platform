@@ -1,13 +1,21 @@
-/* This script performs a **dynamic bulk data insertion across all databases and containers in an Azure Cosmos DB account**.
+/*
+This script automatically goes through all databases and containers in an Azure Cosmos DB account
+and inserts sample data into them.
 
-It programmatically discovers every database and container, retrieves each container’s partition key definition,
-and generates sample documents that include the correct partition key field for that container.
- 
-For each container, it creates a set of items and inserts them in batches using `TransactionalBatch`, ensuring all operations occur within the same partition for efficiency and atomicity.
+Instead of reading data from a file or external source, it generates the data in memory.
+Each container’s partition key is detected, and the generated data is adjusted to match it.
 
-The primary purpose of this script is to **simulate workload, test partition key handling, and measure RU consumption across multiple containers**,
-rather than serve as a production data ingestion pipeline.
-It demonstrates how to dynamically adapt to different container schemas and partition strategies within a single Cosmos DB account.
+The data is inserted in small groups (batches) using TransactionalBatch.
+Each batch is limited to a single partition, which allows all items in that batch
+to be written together successfully or fail together.
+
+This script is mainly used for testing purposes, such as:
+- Simulating data load
+- Checking how partition keys are handled
+- Observing request unit (RU) consumption
+
+It is not designed for real-world data ingestion or large-scale production use.
+
 */
 
 using System;
