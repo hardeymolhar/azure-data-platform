@@ -206,4 +206,33 @@ private static QueryDefinition CreateRandomQuery()
             .WithParameter("@rating", Math.Round(2 + (rand.NextDouble() * 3), 1))
     };
 }
+private static async Task RunRandomQueries(Container container, string partitionValue)
+{
+    for (int i = 0; i < 5; i++)
+    {
+        QueryDefinition query = CreateRandomQuery();
+
+        FeedIterator<Dictionary<string, object>> iterator =
+            container.GetItemQueryIterator<Dictionary<string, object>>(
+                query,
+                requestOptions: new QueryRequestOptions
+                {
+                    PartitionKey = new PartitionKey(partitionValue)
+                });
+
+        int total = 0;
+
+        while (iterator.HasMoreResults)
+        {
+            FeedResponse<Dictionary<string, object>> response =
+                await iterator.ReadNextAsync();
+
+            total += response.Count;
+
+            Console.WriteLine($"      Query RU Charge: {response.RequestCharge:0.00}");
+        }
+
+        Console.WriteLine($"      Query {i + 1} returned {total} items");
+    }
+}
 }
