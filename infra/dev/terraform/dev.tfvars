@@ -2,14 +2,14 @@ subscription_id = "4f6a6eb9-27d0-4ed6-a31c-2bde135e2db6"
 
 admin_password = "r3P1iKa5x_123"
 
-rg = ["rg_sb_eastus_308450_1_177419938877",
-  "rg_sb_westus_308450_2_177419938938",
-"rg_sb_centralindia_308450_3_177419939079"]
+rg = ["rg_sb_centralindia_308450_3_177476938572",
+  "rg_sb_westus_308450_2_177476938234",
+"rg_sb_eastus_308450_1_177476938111"]
 
 location = [
-  "eastus",
+  "centralindia",
   "westus",
-  "centralindia"
+  "eastus"
 ]
 
 cosmosdb_structure = {
@@ -85,24 +85,24 @@ cosmosdb_structure = {
 
 network_structure = {
 
-  prod-vnet = {
-    address_space = ["10.0.0.0/16"]
+  dev-vnet = {
+    address_space = ["10.1.0.0/16"]
 
     subnets = {
       app-subnet = {
-        address_prefix = ["10.0.1.0/24"]
+        address_prefix = ["10.1.1.0/24"]
       }
 
       db-subnet = {
-        address_prefix = ["10.0.2.0/24"]
+        address_prefix = ["10.1.2.0/24"]
       }
 
       pe-subnet = {
-        address_prefix = ["10.0.3.0/24"]
+        address_prefix = ["10.1.3.0/24"]
       }
 
       AzureBastionSubnet = {
-        address_prefix = ["10.0.4.0/26"]
+        address_prefix = ["10.1.4.0/26"]
       }
     }
   }
