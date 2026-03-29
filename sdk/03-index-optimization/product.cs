@@ -1,10 +1,12 @@
 public record Product(
-    string id, 
-    string categoryId,
-    string categoryName,
-    string sku,
+    string id,
     string name,
-    string description,
+    string category,
     double price,
-    Tag[] tags
+    int quantity,
+    string status,
+    string region,
+    double rating,
+    DateTime createdAt,
+    Tag[]? tags 
 );

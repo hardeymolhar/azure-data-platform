@@ -13,3 +13,14 @@ locals {
   client_ip = chomp(data.http.client_ip.response_body)
 }
 
+locals {
+  storage_accounts = {
+    multimedia = {
+      name = "multimedia12151"
+    }
+
+    tfstate = {
+      name = "tfstate21151"
+    }
+  }
+}

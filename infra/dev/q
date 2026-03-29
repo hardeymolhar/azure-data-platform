@@ -1,0 +1,24 @@
+[33m4ffbbcc[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmaster[m[33m, [m[1;33mtag: [m[1;33mphase-3[m[33m, [m[1;33mtag: [m[1;33mphase-1[m[33m)[m docs(phase-3): document automated infrastructure deployment and orchestration
+[33m36fd1fa[m[33m ([m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m Fixing Terraform Deployment Pipeline Script
+[33m53f579c[m feat: integrate Terraform provisioning with Ansible configuration pipeline
+[33mb1b2012[m Trying to connect with ansible
+[33mf81f7e5[m Bootstrapping .NET config over  private endpoint
+[33m9c7429b[m Adding Private Endpoint to the existing architecture
+[33mcb379d0[m docs: move documentation to project-documentation directory
+[33mc29bb07[m rename docs to project-documentation for clarity
+[33mf38c65c[m Merge branch 'master' of https://github.com/hardeymolhar/azure-data-platform
+[33m077f304[m Documentation Screenshots uploaded
+[33m5f8a63a[m Delete docs/architecture.md
+[33m93d5b0b[m Delete docs/troubleshooting.md
+[33m609aa4d[m Delete docs/ru-analysis.md
+[33mf095c9a[m[33m ([m[1;33mtag: [m[1;33mboth-phases-one-and-two[m[33m)[m Add Cosmos DB SDK documentation for connectivity and transactional batch operations
+[33m5563545[m Refactor CosmosDB Deployment to use database-level throughput
+[33m475c160[m Refactor Cosmos DB deployment to use dedicated container throughput
+[33mcc8ef21[m Refactor: reorganize Cosmos SDK labs into structured project layout
+[33m5ea9272[m Merge branch 'master' of https://github.com/hardeymolhar/azure-data-platform
+[33mbd0fb5c[m Add documentation folder and architecture notes
+[33m58bf1c9[m Delete docs/README.md
+[33mfa4e3ab[m Create README.md
+[33m9d4666d[m Delete docs
+[33mb419699[m Create docs
+[33mca2487d[m Initial commit - Azure Data Platform (Terraform + Cosmos SDK)

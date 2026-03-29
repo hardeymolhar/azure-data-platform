@@ -6,7 +6,6 @@ variable "rg" {
 variable "location" {
   type        = list(string)
   description = "Azure region for all resources."
-  default     = ["eastus", "westus", "centralindia"]
 }
 
 
